@@ -1,4 +1,4 @@
-# Respuestas a las preguntas
+# Parte 1: Base de Datos
 
 ## Primera pregunta
 
@@ -77,22 +77,12 @@ La razón por la cual `registerId` en `registerHeader` es `IDENTITY` y no en `re
 
 ## Quinta pregunta
 
-### Uso de índices adicionales
+**Uso de índices adicionales:** Aunque ya existe una clave primaria, se podrían añadir índices en las columnas que se usan con frecuencia para filtros o uniones, como `meterId` en `registerHeader`, `obisId` en `registerDetail`, y `readDate`. Esto ayudaría a mejorar el rendimiento de las consultas que involucran estas columnas.
 
-Aunque ya existe una clave primaria, se podrían añadir índices en las columnas que se usan con frecuencia para filtros o uniones, como `meterId` en `registerHeader`, `obisId` en `registerDetail`, y `readDate`. Esto ayudaría a mejorar el rendimiento de las consultas que involucran estas columnas.
+**Normalización de datos (tipos de valores en `registerDetail`):** El campo `value` en `registerDetail` está definido como `varchar(18)`, lo cual no es ideal para almacenar valores numéricos. Sería más eficiente usar un tipo como `DECIMAL` o `FLOAT`, lo que no solo optimiza el espacio, sino que también mejora la precisión en las consultas.
 
-### Normalización de datos (tipos de valores en `registerDetail`)
+**Eliminación de la tabla `registerHeader`:** Si la información de la cabecera (como `readDate`, `meterId` y `type`) se repite mucho, podría ser útil combinar la tabla `registerHeader` con `registerDetail`. Esto eliminaría la necesidad de hacer tantas uniones entre las tablas y simplificaría las consultas.
 
-El campo `value` en `registerDetail` está definido como `varchar(18)`, lo cual no es ideal para almacenar valores numéricos. Sería más eficiente usar un tipo como `DECIMAL` o `FLOAT`, lo que no solo optimiza el espacio, sino que también mejora la precisión en las consultas.
+**Desnormalización de `registerDetail`:** Usar `varchar` para almacenar el `obisId` en `registerDetail` podría estar generando un sobrecosto en almacenamiento y en las consultas. Sería más eficiente cambiar este campo a una clave foránea que apunte directamente a la tabla `obis`, siempre y cuando no se esté utilizando como un campo calculado.
 
-### Eliminación de la tabla `registerHeader`
-
-Si la información de la cabecera (como `readDate`, `meterId` y `type`) se repite mucho, podría ser útil combinar la tabla `registerHeader` con `registerDetail`. Esto eliminaría la necesidad de hacer tantas uniones entre las tablas y simplificaría las consultas.
-
-### Desnormalización de `registerDetail`
-
-Usar `varchar` para almacenar el `obisId` en `registerDetail` podría estar generando un sobrecosto en almacenamiento y en las consultas. Sería más eficiente cambiar este campo a una clave foránea que apunte directamente a la tabla `obis`, siempre y cuando no se esté utilizando como un campo calculado.
-
-### Uso de `INNER JOIN` en lugar de `LEFT JOIN`
-
-Si no se esperan valores nulos en las uniones, cambiar de `LEFT JOIN` a `INNER JOIN` puede mejorar el rendimiento. Esto es porque el `INNER JOIN` solo devuelve los registros coincidentes, lo que elimina la necesidad de verificar los nulos y hace que las consultas se ejecuten más rápido.
+**Uso de `INNER JOIN` en lugar de `LEFT JOIN`:** Si no se esperan valores nulos en las uniones, cambiar de `LEFT JOIN` a `INNER JOIN` puede mejorar el rendimiento. Esto es porque el `INNER JOIN` solo devuelve los registros coincidentes, lo que elimina la necesidad de verificar los nulos y hace que las consultas se ejecuten más rápido.
