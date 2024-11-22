@@ -1,0 +1,6 @@
+@WebApi_HostAddress = http://localhost:5077
+
+GET {{WebApi_HostAddress}}/categories/
+Accept: application/json
+
+###
